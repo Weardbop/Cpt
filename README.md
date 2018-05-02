@@ -1,3 +1,6 @@
 # Cpt
 Centipede game
-same tetoe
+import pygame
+
+
+
