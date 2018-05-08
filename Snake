@@ -75,11 +75,14 @@ while not done:
     x = snake_segments[0].rect.x + x_change
     y = snake_segments[0].rect.y + y_change
     segment = Segment(x, y)
+
     if x>450:
         y_change = 18
-    if y == 48:
-        x_change = x_change*-1
-        y_change = 0
+        x_change = 0
+        if y > 48:
+            x_change = -18
+            y_change = 0
+
 
     # Insert new segment into the list
     snake_segments.insert(0, segment)
