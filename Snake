@@ -13,7 +13,7 @@ segment_margin = 3
 # Set initial speed
 x_change = segment_width + segment_margin
 y_change = 0
-
+Y_down = 66
 
 class Segment(pygame.sprite.Sprite):
     """ Class to represent one segment of the snake. """
@@ -75,14 +75,16 @@ while not done:
     x = snake_segments[0].rect.x + x_change
     y = snake_segments[0].rect.y + y_change
     segment = Segment(x, y)
-
-    if x>450:
+    if x>450 or x<50:
         y_change = 18
         x_change = 0
-        if y > 48:
+    if y == Y_down:
+        y_change = 0
+        if x>450:
             x_change = -18
-            y_change = 0
-
+        elif x<50:
+            x_change = 18
+        Y_down = Y_down + 36
 
     # Insert new segment into the list
     snake_segments.insert(0, segment)
@@ -102,4 +104,3 @@ while not done:
     clock.tick(5)
 
 pygame.quit()
-
