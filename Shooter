@@ -1,7 +1,6 @@
 # Cpt
 # Centipede game
 import pygame
-import pygame
 import random
 
 # Define some colors
