@@ -1,4 +1,3 @@
-# Shooter and Snake combined
 import pygame
 import random
 
@@ -69,7 +68,7 @@ class Bullet(pygame.sprite.Sprite):
 
     def update(self):
         """ Move the bullet. """
-        self.rect.y -= 3
+        self.rect.y -= 10
 
 class Segment(pygame.sprite.Sprite):
     """ Class to represent one segment of the snake. """
@@ -187,39 +186,40 @@ while not done:
             all_sprites_list.remove(bullet)
         # Get rid of last segment of the snake
         # .pop() command removes last item in list
-        old_segment = snake_segments.pop()
-        all_sprites_list.remove(old_segment)
-
+    old_segment = snake_segments.pop()
+    all_sprites_list.remove(old_segment)
         # Figure out where new segment will be
-        x = snake_segments[0].rect.x + x_change
-        y = snake_segments[0].rect.y + y_change
-        segment = Segment(x, y)
+    x = snake_segments[0].rect.x + x_change
+    y = snake_segments[0].rect.y + y_change
+    segment = Segment(x, y)
+    if y > 500:
+        all_sprites_list.remove(segment)
 
-        if x > 450 or x < 50:
-            y_change = 18
-            x_change = 0
-        if y == Y_down:
-            y_change = 0
-            if x > 450:
-                x_change = -18
-            elif x < 50:
-                x_change = 18
-            Y_down = Y_down + 36
+    if x > 450 or x < 50:
+        y_change = 18
+        x_change = 0
+    if y == Y_down:
+        y_change = 0
+        if x > 450:
+            x_change = -18
+        elif x < 50:
+            x_change = 18
+        Y_down = Y_down + 36
 
         # Insert new segment into the list
-        snake_segments.insert(0, segment)
-        all_sprites_list.add(segment)
+    snake_segments.insert(0, segment)
+    all_sprites_list.add(segment)
 
         # -- Draw everything
         # Clear screen
-        screen.fill(BLACK)
+    screen.fill(BLACK)
 
-        all_sprites_list.draw(screen)
+    all_sprites_list.draw(screen)
 
         # Flip screen
-        pygame.display.flip()
+    pygame.display.flip()
 
         # Pause
-        clock.tick(120)
+    clock.tick(30)
 
 pygame.quit()
