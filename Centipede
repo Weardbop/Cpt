@@ -162,6 +162,19 @@ while not done:
             all_sprites_list.add(bullet)
             bullet_list.add(bullet)
 
+
+    if len(block_list) == 0:
+
+        for i in range(25):
+
+            block = Block(BLUE)
+
+            block.rect.x = random.randrange(400)
+            block.rect.y = random.randrange(550)
+
+            block_list.add(block)
+            all_sprites_list.add(block)
+
     # --- Game logic
 
     # Call the update() method on all the sprites
