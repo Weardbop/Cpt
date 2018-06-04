@@ -14,9 +14,8 @@ segment_height = 15
 segment_margin = 3
 
 # Set initial speed
-x_change = segment_width + segment_margin
-y_change = 0
-Y_down = 66
+
+
 
 class Player(pygame.sprite.Sprite):
     """ This class represents the Player. """
@@ -50,12 +49,12 @@ class Bullet(pygame.sprite.Sprite):
 
         self.image = pygame.Surface([5, 11])
         self.image.fill(WHITE)
-
         self.rect = self.image.get_rect()
 
     def update(self):
         """ Move the bullet. """
         self.rect.y -= 10
+
 
 class Segment(pygame.sprite.Sprite):
     """ Class to represent one segment of the snake. """
@@ -74,6 +73,28 @@ class Segment(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+
+    def update(self):
+        x_change = 18
+        y_change = 0
+        y_down = 36
+        if self.rect.x > 450 or self.rect.x < -100:
+            y_change = 18
+            x_change = 0
+            if self.rect.y == 36:
+                y_change = 0
+                y_down = y_down + 36
+                self.rect.y += y_change
+                if self.rect.x > 450:
+                    x_change = -18
+                    self.rect.x += x_change
+                elif self.rect.x < 50:
+                    x_change = 18
+                    self.rect.x += x_change
+        self.rect.x += x_change
+        self.rect.y += y_change
+
+
 
 
 # Call this function so the Pygame library can initialize itself
@@ -98,6 +119,7 @@ for i in range(15):
     segment = Segment(x, y)
     snake_segments.add(segment)
     all_sprites_list.add(segment)
+
 
 
 # Create a red player block
@@ -154,16 +176,6 @@ while not done:
 
     segment = Segment(x, y)
 
-    if x > 450 or x < 50:
-        y_change = 18
-        x_change = 0
-    if y == Y_down:
-        y_change = 0
-        if x > 450:
-            x_change = -18
-        elif x < 50:
-            x_change = 18
-        Y_down = Y_down + 36
 
     # Insert new segment into the list
     snake_segments.add(segment)
