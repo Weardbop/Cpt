@@ -77,24 +77,21 @@ class Segment(pygame.sprite.Sprite):
     def update(self):
         x_change = 18
         y_change = 0
-        y_down = 36
-        if self.rect.x > 450 or self.rect.x < -100:
+        y_down = 50
+        if self.rect.x >= 450 or self.rect.x <= -50:
             y_change = 18
             x_change = 0
-            if self.rect.y == 36:
-                y_change = 0
+        if self.rect.y >= y_down:
+            y_change = 0
+            self.rect.y += y_change
+            if self.rect.x > 450:
+                x_change = -18
+                self.rect.x += x_change
+            elif self.rect.x < 50:
+                self.rect.x += x_change
                 y_down = y_down + 36
-                self.rect.y += y_change
-                if self.rect.x > 450:
-                    x_change = -18
-                    self.rect.x += x_change
-                elif self.rect.x < 50:
-                    x_change = 18
-                    self.rect.x += x_change
         self.rect.x += x_change
         self.rect.y += y_change
-
-
 
 
 # Call this function so the Pygame library can initialize itself
