@@ -16,7 +16,6 @@ segment_margin = 3
 # Set initial speed
 
 
-
 class Player(pygame.sprite.Sprite):
     """ This class represents the Player. """
 
@@ -73,25 +72,27 @@ class Segment(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.x_change = 18
+        self.y_change = 0
+        self.y_down = 48
 
     def update(self):
-        x_change = 18
-        y_change = 0
-        y_down = 50
-        if self.rect.x >= 450 or self.rect.x <= -50:
-            y_change = 18
-            x_change = 0
-        if self.rect.y >= y_down:
-            y_change = 0
-            self.rect.y += y_change
-            if self.rect.x > 450:
-                x_change = -18
-                self.rect.x += x_change
-            elif self.rect.x < 50:
-                self.rect.x += x_change
-                y_down = y_down + 36
-        self.rect.x += x_change
-        self.rect.y += y_change
+        self.rect.x += self.x_change
+        self.rect.y += self.y_change
+        if self.rect.x > 472:
+            self.y_change = 18
+            self.x_change = 0
+        if self.rect.x < 10:
+            self.y_change = 18
+            self.x_change = 0
+        if self.rect.y > self.y_down:
+            self.y_change = 0
+            self.y_down += 36
+            if self.rect.x > 472:
+                self.x_change = -18
+            if self.rect.x < 10:
+                self.x_change = 18
+
 
 
 # Call this function so the Pygame library can initialize itself
@@ -111,7 +112,7 @@ bullet_list = pygame.sprite.Group()
 
 snake_segments = pygame.sprite.Group()
 for i in range(15):
-    x = 250 - (segment_width + segment_margin) * i
+    x = 260 - (segment_width + segment_margin) * i
     y = 30
     segment = Segment(x, y)
     snake_segments.add(segment)
@@ -155,7 +156,7 @@ while not done:
         Snake_hit_list = pygame.sprite.spritecollide(bullet, snake_segments, True)
 
         # For each block hit, remove the bullet and add to the score
-        for block in Snake_hit_list:
+        for snake in Snake_hit_list:
             bullet_list.remove(bullet)
             all_sprites_list.remove(bullet)
             score += 1
@@ -167,6 +168,11 @@ while not done:
             all_sprites_list.remove(bullet)
         # Get rid of last segment of the snake
         # .pop() command removes last item in list
+    hits = pygame.sprite.spritecollide(player, snake_segments, False)
+    if hits:
+        done = True
+
+
     old_segment = snake_segments.remove()
     all_sprites_list.remove(old_segment)
 
