@@ -121,7 +121,7 @@ for i in range(25):
     block = Block(BLUE)
 
     # Set a random location for the block
-    block.rect.x = random.randrange(screen_width)
+    block.rect.x = random.randrange(400)
     block.rect.y = random.randrange(550)
 
     # Add the block to the list of objects
@@ -130,7 +130,7 @@ for i in range(25):
 
     if block == 0:
         block = Block(BLUE)
-        block.rect.x = random.randrange(screen_width)
+        block.rect.x = random.randrange(400)
         block.rect.y = random.randrange(550)
 
         block_list.add(block)
@@ -146,7 +146,9 @@ done = False
 clock = pygame.time.Clock()
 
 score = 0
-player.rect.y = 650
+player.rect.y = 675
+title = ('Centipede')
+play = ('Click anywhere to play')
 
 while not done:
     for event in pygame.event.get():
@@ -161,6 +163,25 @@ while not done:
             # Add the bullet to the lists
             all_sprites_list.add(bullet)
             bullet_list.add(bullet)
+
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        font = pygame.font.SysFont('Comic Sans MS', 40)
+        Score_display = font.render(str(score), True, (RED))
+        screen.blit(Score_display, [ 25, 20 ])
+
+        font = pygame.font.SysFont('Comic Sans MS', 40)
+        high_Score = font.render(str(score), True, (RED))
+        screen.blit(high_Score, [525, 20])
+
+        font = pygame.font.SysFont('Comic Sans MS', 40)
+        screen_title = font.render(str(title), True, (WHITE))
+        screen.blit(screen_title, [ 175, 200 ])
+
+        font = pygame.font.SysFont('Comic Sans MS', 40)
+        screen_play = font.render(str(play), True, (WHITE))
+        screen.blit(screen_play, [ 105, 300 ])
+        title = ""
+        play = ""
 
 
     if len(block_list) == 0:
@@ -201,10 +222,11 @@ while not done:
         # .pop() command removes last item in list
     old_segment = snake_segments.pop()
     all_sprites_list.remove(old_segment)
-        # Figure out where new segment will be
-    x = snake_segments[0].rect.x + x_change
-    y = snake_segments[0].rect.y + y_change
+    # Figure out where new segment will be
+    x = snake_segments[ 0 ].rect.x + x_change
+    y = snake_segments[ 0 ].rect.y + y_change
     segment = Segment(x, y)
+
     if y > 500:
         all_sprites_list.remove(segment)
 
@@ -219,7 +241,7 @@ while not done:
             x_change = 18
         Y_down = Y_down + 36
 
-        # Insert new segment into the list
+            # Insert new segment into the list
     snake_segments.insert(0, segment)
     all_sprites_list.add(segment)
 
@@ -229,10 +251,26 @@ while not done:
 
     all_sprites_list.draw(screen)
 
+    font = pygame.font.SysFont('Comic Sans MS', 40)
+    Score_display = font.render(str(score), True, (RED))
+    screen.blit(Score_display, [ 25, 20 ])
+
+    font = pygame.font.SysFont('Comic Sans MS', 40)
+    high_Score = font.render(str(score), True, (RED))
+    screen.blit(high_Score, [ 525, 20 ])
+
+    font = pygame.font.SysFont('Comic Sans MS', 40)
+    screen_title = font.render(str(title), True, (WHITE))
+    screen.blit(screen_title, [ 175, 200 ])
+
+    font = pygame.font.SysFont('Comic Sans MS', 40)
+    screen_play = font.render(str(play), True, (WHITE))
+    screen.blit(screen_play, [ 105, 300 ])
+
         # Flip screen
     pygame.display.flip()
 
         # Pause
-    clock.tick(30)
+    clock.tick(50)
 
 pygame.quit()
