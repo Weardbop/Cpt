@@ -6,6 +6,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
 
 # Set the width and height of each snake segment
 segment_width = 15
@@ -94,6 +95,48 @@ class Segment(pygame.sprite.Sprite):
                 self.x_change = 18
 
 
+class Obstacle(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((20, 30))
+        self.image.fill(RED)
+        self.rect = self.image. get_rect()
+        self.rect.x = random.randrange(0, screen_width - self.rect.width)
+        self.rect.y = random.randrange(- 80, -30)
+        self.speedy = random.randrange(4, 8)
+
+    def update(self):
+        self.rect.y += self.speedy
+        if self.rect.top > screen_height:
+            self.rect.x = random.randrange(0, screen_width - self.rect.width)
+            self.rect.y = random.randrange(- 80, -30)
+            self.speedy = random.randrange(4, 8)
+
+
+fontname = pygame.font.match_font("times")
+
+
+def write_text(surf, text, size, x, y):
+    font = pygame.font.Font(fontname, size)
+    text_surface = font.render(text, True, YELLOW)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    surf.blit(text_surface, text_rect)
+
+
+def gameover_menu():
+    write_text(screen, "Welcome to Centipede", 50, screen_width / 2, screen_height - 600)
+    write_text(screen, "Click mouse to begin", 18, screen_width / 2, screen_height - 100)
+    pygame.display.flip()
+    wait_for_click = True
+    while wait_for_click:
+        clock.tick(50)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                wait_for_click = False
+
 
 # Call this function so the Pygame library can initialize itself
 pygame.init()
@@ -107,6 +150,11 @@ pygame.display.set_caption('Centipede')
 
 all_sprites_list = pygame.sprite.Group()
 
+obstacle = pygame.sprite.Group()
+for i in range(5):
+    falling_obstacle = Obstacle()
+    obstacle.add(falling_obstacle)
+    all_sprites_list.add(falling_obstacle)
 # List of each bullet
 bullet_list = pygame.sprite.Group()
 
@@ -118,21 +166,42 @@ for i in range(15):
     snake_segments.add(segment)
     all_sprites_list.add(segment)
 
-
-
 # Create a red player block
 player = Player()
 all_sprites_list.add(player)
 
 # Loop until the user clicks the close button.
 done = False
-
+gameover = True
 clock = pygame.time.Clock()
 
 score = 0
+highscore = 0
 player.rect.y = 650
 
 while not done:
+    if gameover:
+        gameover_menu()
+        gameover = False
+        all_sprites_list = pygame.sprite.Group()
+        obstacle = pygame.sprite.Group()
+        bullet_list = pygame.sprite.Group()
+        snake_segments = pygame.sprite.Group()
+        player = Player()
+        all_sprites_list.add(player)
+        player.rect.y = 650
+        for i in range(15):
+            x = 260 - (segment_width + segment_margin) * i
+            y = 30
+            segment = Segment(x, y)
+            snake_segments.add(segment)
+            all_sprites_list.add(segment)
+        for i in range(5):
+            falling_obstacle = Obstacle()
+            obstacle.add(falling_obstacle)
+            all_sprites_list.add(falling_obstacle)
+        score = 0
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
@@ -147,7 +216,6 @@ while not done:
             bullet_list.add(bullet)
 
     # --- Game logic
-
     # Call the update() method on all the sprites
     all_sprites_list.update()
 
@@ -168,9 +236,12 @@ while not done:
             all_sprites_list.remove(bullet)
         # Get rid of last segment of the snake
         # .pop() command removes last item in list
-    hits = pygame.sprite.spritecollide(player, snake_segments, False)
+    hit = pygame.sprite.spritecollide(player, snake_segments, True)
+    hits = pygame.sprite.spritecollide(player, obstacle, False)
     if hits:
-        done = True
+        gameover = True
+    elif hit:
+        gameover = True
 
 
     old_segment = snake_segments.remove()
@@ -184,17 +255,20 @@ while not done:
     snake_segments.add(segment)
     all_sprites_list.add(segment)
 
+    if score > highscore:
+        highscore = score
 
         # -- Draw everything
         # Clear screen
     screen.fill(BLACK)
 
     all_sprites_list.draw(screen)
-
-        # Flip screen
+    write_text(screen, "score:" + str(score), 20, screen_width - 450, 10)
+    write_text(screen, "highscore:" + str(highscore), 20, screen_width - 50, 10)
+    # Flip screen
     pygame.display.flip()
 
-        # Pause
-    clock.tick(100)
+    # Pause
+    clock.tick(50)
 
 pygame.quit()
