@@ -143,7 +143,7 @@ def gameover_menu():
     write_text(screen, "Click mouse to begin", 26, screen_width / 2, screen_height - 100)
     write_text(screen, "^o,o^", 75, screen_width / 2, screen_height / 2)
     pygame.display.flip()
-    wait_for_click = True<
+    wait_for_click = True
     while wait_for_click:
         clock.tick(50)
         for event in pygame.event.get():
