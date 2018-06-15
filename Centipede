@@ -14,9 +14,6 @@ segment_height = 15
 # Margin between each segment
 segment_margin = 3
 
-# Set initial speed
-
-
 class Block(pygame.sprite.Sprite):
     """ This class represents the block. """
 
@@ -71,7 +68,7 @@ class Bullet(pygame.sprite.Sprite):
 class Segment(pygame.sprite.Sprite):
     """ Class to represent one segment of the snake. """
 
-    # -- Methods
+    # Methods
     # Constructor function
     def __init__(self, x, y):
         # Call the parent's constructor
@@ -90,6 +87,7 @@ class Segment(pygame.sprite.Sprite):
         self.y_down = 48
 
     def update(self):
+        # this class defines the snakes movement
         self.rect.x += self.x_change
         self.rect.y += self.y_change
         if self.rect.x > 472:
@@ -156,7 +154,7 @@ def gamestart_menu():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 wait_for_click = False
 
-
+# Makes a game over menu if player dies
 def gameover_menu():
     screen.fill(BLACK)
     write_text(screen, "Game Over", 100,screen_width / 2, screen_height - 600)
@@ -185,11 +183,13 @@ pygame.display.set_caption('Centipede')
 block_list = pygame.sprite.Group()
 all_sprites_list = pygame.sprite.Group()
 
+# creates the random obstacles falling down
 obstacle = pygame.sprite.Group()
 for i in range(5):
     falling_obstacle = Obstacle()
     obstacle.add(falling_obstacle)
     all_sprites_list.add(falling_obstacle)
+
 # List of each bullet
 bullet_list = pygame.sprite.Group()
 
@@ -237,6 +237,7 @@ highscore = 0
 player.rect.y = 650
 
 while not done:
+
     if game_start:
         gamestart_menu()
         game_start = False
@@ -248,13 +249,14 @@ while not done:
         player = Player()
         all_sprites_list.add(player)
         player.rect.y = 650
-
+        # creates a snake
         for i in range(15):
             x = 260 - (segment_width + segment_margin) * i
             y = 30
             segment = Segment(x, y)
             snake_segments.add(segment)
             all_sprites_list.add(segment)
+        # creates obstacles
         for i in range(5):
             falling_obstacle = Obstacle()
             obstacle.add(falling_obstacle)
@@ -272,13 +274,14 @@ while not done:
         player = Player()
         all_sprites_list.add(player)
         player.rect.y = 650
-
+        # creates a new snake
         for i in range(15):
             x = 260 - (segment_width + segment_margin) * i
             y = 30
             segment = Segment(x, y)
             snake_segments.add(segment)
             all_sprites_list.add(segment)
+        # creates a new wave of obstacles
         for i in range(5):
             falling_obstacle = Obstacle()
             obstacle.add(falling_obstacle)
@@ -298,8 +301,9 @@ while not done:
             all_sprites_list.add(bullet)
             bullet_list.add(bullet)
 
+    # if all the blocks on the screen are cleared
     if len(block_list) == 0:
-
+        # a new wave of blocks respawn
         for i in range(25):
             block = Block(BLUE)
 
@@ -309,7 +313,9 @@ while not done:
             block_list.add(block)
             all_sprites_list.add(block)
 
+    # If the snake is killed
     if len(snake_segments) == 0:
+        # it creates another snake
         for i in range(15):
             x = 260 - (segment_width + segment_margin) * i
             y = 30
@@ -334,6 +340,7 @@ while not done:
             score += 1
             print(score)
 
+
         for bullet in bullet_list:
 
             # See if it hit a block
@@ -349,10 +356,12 @@ while not done:
         if bullet.rect.y < -10:
             bullet_list.remove(bullet)
             all_sprites_list.remove(bullet)
-        # Get rid of last segment of the snake
-        # .pop() command removes last item in list
+
+    # checks if the bullets hit the snake
     hit = pygame.sprite.spritecollide(player, snake_segments, True)
     hits = pygame.sprite.spritecollide(player, obstacle, False)
+
+    # if the snake or the obstacles hit the shooter, game over
     if hits:
         gameover = True
     elif hit:
@@ -361,10 +370,11 @@ while not done:
     if score > highscore:
         highscore = score
 
-        # -- Draw everything
-        # Clear screen
+    # -- Draw everything
+    # Clear screen
     screen.fill(BLACK)
 
+    # Shows the highscore
     all_sprites_list.draw(screen)
     write_text(screen, "score:" + str(score), 20, screen_width - 450, 10)
     write_text(screen, "highscore:" + str(highscore), 20, screen_width - 50, 10)
